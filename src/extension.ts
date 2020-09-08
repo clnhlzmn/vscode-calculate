@@ -37,14 +37,13 @@ function runCalculate ( editMaker : IEditMaker ){
 
 				var selectedText = activeTextEditor.document.getText(selection).replace(/\$i/g, String(index + 1));
 
-
 				if ( selectedText === "" ){
 					erroralert.saveError("NO_SELECT");
 					return;
 				}
 				
 				try{
-					var evaluatedMath = math.eval(selectedText.toString().replace(/,/g,'.'));
+					var evaluatedMath = math.eval(selectedText.toString());
 					editMaker(textEditorEdit,selection,evaluatedMath);
 				}catch (e){
 					erroralert.saveError("CALC_ERR",selectedText.toString());
@@ -67,23 +66,13 @@ interface IEditMaker {
 }
 
 let insertResult : IEditMaker = function ( edit : vscode.TextEditorEdit, selection : vscode.Selection, result : number){
-	edit.insert(selection.end, "="+round(result));
+	edit.insert(selection.end, "\n" + result);
 }
 
 let overwriteResult : IEditMaker = function ( edit : vscode.TextEditorEdit, selection : vscode.Selection, result : number){
-	edit.replace(selection,String(round(result)));
+	edit.replace(selection, String(result));
 }
-
-function round(n: number){
-	// Round to 5 decimal places
-	return Math.round(n * 1000000) / 1000000;
-}
-
 
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
-
-
-// exports.activate = activate;
-// exports.deactivate = deactivate;
