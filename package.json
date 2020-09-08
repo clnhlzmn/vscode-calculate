@@ -1,21 +1,21 @@
 {
     "name": "calculate",
     "displayName": "Calculate",
-    "description": "Select some math, evaluate it",
-    "version": "2.1.0",
-    "publisher": "acarreiro",
+    "description": "Select some math, evaluate it. A fork of andrewcarreiro/vscode-calculate",
+    "version": "1.0.0",
+    "publisher": "clnhlzmn",
     "engines": {
         "vscode": "^0.10.6"
     },
     "author": {
-        "name": "Andrew Carreiro",
-        "email": "andrew@headfirst.ca",
-        "url": "http://headfirst.ca/"
+        "name": "Colin Holzman",
+        "email": "me@colinholzman.xyz",
+        "url": "http://colinholzman.xyz"
     },
     "license": "WTFPL",
     "repository": {
         "type": "git",
-        "url": "https://github.com/andrewcarreiro/vscode-calculate"
+        "url": "https://github.com/clnhlzmn/vscode-calculate.git"
     },
     "icon": "store-icon.png",
     "categories": [
