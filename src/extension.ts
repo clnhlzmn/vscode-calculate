@@ -2,10 +2,14 @@ import * as math from "mathjs";
 import * as vscode from "vscode";
 import ErrorAlert from "./erroralert";
 
+let parser: mathjs.Parser
+
 /**
  * Initialization code
  */
 export function activate(context) {
+
+	parser = math.parser()
 	
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.calculate', runCalculate(insertResult))
@@ -19,7 +23,7 @@ export function activate(context) {
 /**
  * Runs the calculation with a given edit strategy
  */
-function runCalculate ( editMaker : IEditMaker ){
+function runCalculate(editMaker: IEditMaker) {
 	return () => {
 
 		var win = vscode.window;
@@ -27,25 +31,25 @@ function runCalculate ( editMaker : IEditMaker ){
 
 		var activeTextEditor = win.activeTextEditor;
 		
-		if( activeTextEditor === undefined ){
+		if (activeTextEditor === undefined) {
 			erroralert.throwSingleErrorImmediately("NO_FOCUS");
 			return false;
 		}
 
-		activeTextEditor.edit( (textEditorEdit) => {
+		activeTextEditor.edit((textEditorEdit) => {
 			activeTextEditor.selections.forEach((selection, index) => {
 
 				var selectedText = activeTextEditor.document.getText(selection).replace(/\$i/g, String(index + 1));
 
-				if ( selectedText === "" ){
+				if (selectedText === "") {
 					erroralert.saveError("NO_SELECT");
 					return;
 				}
 				
-				try{
-					var evaluatedMath = math.eval(selectedText.toString());
+				try {
+					var evaluatedMath = parser.eval(selectedText.toString());
 					editMaker(textEditorEdit,selection,evaluatedMath);
-				}catch (e){
+				} catch (e) {
 					erroralert.saveError("CALC_ERR",selectedText.toString());
 				}
 				
@@ -62,14 +66,14 @@ function runCalculate ( editMaker : IEditMaker ){
  * A standard interface for making the edits
  */
 interface IEditMaker {
-	( edit : vscode.TextEditorEdit, selection : vscode.Selection, result : number ) : void;
+	(edit: vscode.TextEditorEdit, selection: vscode.Selection, result: number ): void;
 }
 
-let insertResult : IEditMaker = function ( edit : vscode.TextEditorEdit, selection : vscode.Selection, result : number){
+let insertResult: IEditMaker = function(edit: vscode.TextEditorEdit, selection: vscode.Selection, result: number) {
 	edit.insert(selection.end, "\n" + result);
 }
 
-let overwriteResult : IEditMaker = function ( edit : vscode.TextEditorEdit, selection : vscode.Selection, result : number){
+let overwriteResult: IEditMaker = function(edit: vscode.TextEditorEdit, selection: vscode.Selection, result: number) {
 	edit.replace(selection, String(result));
 }
 
